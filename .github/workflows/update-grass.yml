@@ -46,6 +46,7 @@ jobs:
         uses: Platane/snk@v3 #
         with:
           github_user_name: ${{ github.repository_owner }} #
+          token: ${{ secrets.PAT_TOKEN }}
           outputs: |
             dist/github-contribution-grid-snake.svg?color_snake=${{ steps.season.outputs.snake }}&color_dots=${{ steps.season.outputs.dots }}
             dist/github-contribution-grid-snake-dark.svg?color_snake=${{ steps.season.outputs.snake }}&color_dots=${{ steps.season.outputs.dots }}&color_mode=dark
