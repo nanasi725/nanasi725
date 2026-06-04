@@ -16,11 +16,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4 #
 
-      - name: Determine seasonal colors
+     - name: Determine seasonal colors
         id: season
         run: |
-          # 現在の月を取得 (1〜12)
-          MONTH=$(date +%m | sed 's/^0//')
+          # 一時的にテストしたい月を直接数字で指定する（例: 10 = 秋）
+          MONTH=10
+          
+          # ※これより下の if [ "$MONTH" ... ] の部分は変更しないでそのまま
+          if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 5 ]; then
           
           # 季節ごとに5つの草の色（カンマ区切り）とヘビの色を定義
           if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 5 ]; then
