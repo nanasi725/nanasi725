@@ -8,46 +8,53 @@ on:
 jobs:
   generate:
     permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+      contents: write #
+    runs-on: ubuntu-latest #
+    timeout-minutes: 5 #
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 #
 
-      - name: Determine seasonal palette
+      - name: Determine seasonal colors
         id: season
         run: |
           # 現在の月を取得 (1〜12)
           MONTH=$(date +%m | sed 's/^0//')
           
-          # 月に応じて snk が対応しているカラーパレットを決定
-          # ※ github-light/dark 以外のカスタム色を設定
+          # 季節ごとに5つの草の色（カンマ区切り）とヘビの色を定義
           if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 5 ]; then
-            echo "palette=ocean" # 春：爽やかな青緑系（桜の代わりに変化を付ける）
+            # 春：爽やかな青緑（ocean系）
+            echo "dots=#ebedf0,#8dbdff,#64a1f4,#4b91f1,#3c7dd9" >> $GITHUB_OUTPUT
+            echo "snake=orange" >> $GITHUB_OUTPUT
           elif [ "$MONTH" -ge 6 ] && [ "$MONTH" -le 8 ]; then
-            echo "palette=github" # 夏：いつもの鮮やかな緑
+            # 夏：いつもの鮮やかな緑 (GitHub標準)
+            echo "dots=#ebedf0,#9be9a8,#40c463,#30a14e,#216e39" >> $GITHUB_OUTPUT
+            echo "snake=#4b91f1" >> $GITHUB_OUTPUT
           elif [ "$MONTH" -ge 9 ] && [ "$MONTH" -le 11 ]; then
-            echo "palette=halloween" # 秋：ハロウィン・紅葉のオレンジ系
+            # 秋：ハロウィン・紅葉のオレンジ・ブラウニー系
+            echo "dots=#ebedf0,#ffee58,#fcc01e,#f27e2b,#af3812" >> $GITHUB_OUTPUT
+            echo "snake=#b388ff" >> $GITHUB_OUTPUT
           else
-            echo "palette=ice" # 冬：氷のような寒色系
-          fi >> $GITHUB_OUTPUT
+            # 冬：氷のような寒色系・ホワイトアクア
+            echo "dots=#ebedf0,#e0f7fa,#b2ebf2,#4dd0e1,#00bcd4" >> $GITHUB_OUTPUT
+            echo "snake=#cfd8dc" >> $GITHUB_OUTPUT
+          fi
 
       # アニメーションSVGの生成
       - name: Generate github-contribution-grid-snake.svg
-        uses: Platane/snk@v3
+        uses: Platane/snk@v3 #
         with:
-          github_user_name: ${{ github.repository_owner }}
+          github_user_name: ${{ github.repository_owner }} #
           outputs: |
-            dist/github-contribution-grid-snake.svg?palette=${{ steps.season.outputs.palette }}
-            dist/github-contribution-grid-snake-dark.svg?palette=${{ steps.season.outputs.palette }}&color_mode=dark
+            dist/github-contribution-grid-snake.svg?color_snake=${{ steps.season.outputs.snake }}&color_dots=${{ steps.season.outputs.dots }}
+            dist/github-contribution-grid-snake-dark.svg?color_snake=${{ steps.season.outputs.snake }}&color_dots=${{ steps.season.outputs.dots }}&color_mode=dark
 
       # 生成された画像をリポジトリ（outputブランチ）にプッシュ
       - name: Push github-contribution-grid-snake.svg to the output branch
-        uses: crazy-max/ghaction-github-pages@v4
+        uses: crazy-max/ghaction-github-pages@v4 #
         with:
-          target_branch: output
-          build_dir: dist
+          target_branch: output #
+          build_dir: dist #
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #
