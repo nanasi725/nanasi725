@@ -8,22 +8,19 @@ on:
 jobs:
   generate:
     permissions:
-      contents: write #
-    runs-on: ubuntu-latest #
-    timeout-minutes: 5 #
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 #
+        uses: actions/checkout@v4
 
-     - name: Determine seasonal colors
+      - name: Determine seasonal colors
         id: season
         run: |
           # 一時的にテストしたい月を直接数字で指定する（例: 10 = 秋）
           MONTH=10
-          
-          # ※これより下の if [ "$MONTH" ... ] の部分は変更しないでそのまま
-          if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 5 ]; then
           
           # 季節ごとに5つの草の色（カンマ区切り）とヘビの色を定義
           if [ "$MONTH" -ge 3 ] && [ "$MONTH" -le 5 ]; then
@@ -46,18 +43,18 @@ jobs:
 
       # アニメーションSVGの生成
       - name: Generate github-contribution-grid-snake.svg
-        uses: Platane/snk@v3 #
+        uses: Platane/snk@v3
         with:
-          github_user_name: ${{ github.repository_owner }} #
+          github_user_name: ${{ github.repository_owner }}
           outputs: |
             dist/github-contribution-grid-snake.svg?color_snake=${{ steps.season.outputs.snake }}&color_dots=${{ steps.season.outputs.dots }}
             dist/github-contribution-grid-snake-dark.svg?color_snake=${{ steps.season.outputs.snake }}&color_dots=${{ steps.season.outputs.dots }}&color_mode=dark
 
       # 生成された画像をリポジトリ（outputブランチ）にプッシュ
       - name: Push github-contribution-grid-snake.svg to the output branch
-        uses: crazy-max/ghaction-github-pages@v4 #
+        uses: crazy-max/ghaction-github-pages@v4
         with:
-          target_branch: output #
-          build_dir: dist #
+          target_branch: output
+          build_dir: dist
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
